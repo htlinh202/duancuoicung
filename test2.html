@@ -1,0 +1,340 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khám phá Công viên Quốc gia</title>
+
+    <style>
+        /* Cài đặt chung */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #202020;
+            background-color: #ffffff;
+        }
+
+        header {
+            background-color: #174d35;
+            color: #ffffff;
+            padding: 25px;
+            text-align: center;
+        }
+
+        h1, h2 {
+            line-height: 1.3;
+        }
+
+        /* Liên kết bỏ qua đến nội dung chính */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 10px;
+            background-color: #ffffff;
+            color: #174d35;
+            border: 2px solid #174d35;
+            padding: 10px 15px;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 10px;
+        }
+
+        /* Thanh điều hướng */
+        nav {
+            display: inline-block;
+            width: 80%;
+            background-color: #e8f0e9;
+            padding: 15px;
+            vertical-align: top;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            gap: 12px;
+        }
+
+        nav li {
+            /* Đã bỏ kiểu dáng li mặc định tùy chỉnh */
+        }
+
+        nav a {
+            display: inline-block;
+            color: #174d35;
+            font-weight: bold;
+            padding: 8px;
+            text-decoration: underline;
+        }
+
+        nav a:focus,
+        nav a:hover {
+            color: #7a2e00;
+            outline: 2px solid currentColor;
+            outline-offset: 3px;
+        }
+
+        /* Chỉ hình ảnh nằm trong nav */
+        nav img {
+            width: 10%;
+            height: auto;
+            vertical-align: middle;
+        }
+
+        main {
+            display: block;
+            max-width: 1200px;
+            margin: 25px auto;
+        }
+
+        section {
+            margin-bottom: 35px;
+        }
+
+        /* Lưới hai cột */
+        .grid {
+            display: grid;
+            grid-template-columns: 40% 40%;
+            justify-content: space-around;
+            align-items: start;
+            row-gap: 25px;
+            column-gap: 20px;
+            margin: 25px 0;
+        }
+
+        .grid img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Flexbox cho các hình ảnh */
+        .flex {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: flex-start;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .flex figure {
+            flex: 1 1 250px;
+            max-width: 350px;
+            margin: 0;
+        }
+
+        .flex img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        figure {
+            border: 1px solid #777777;
+            padding: 12px;
+            background-color: #f5f5f5;
+            margin: 0;
+        }
+
+        figcaption {
+            padding-top: 10px;
+            color: #202020;
+        }
+
+        footer {
+            background-color: #174d35;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* Hiển thị tốt trên màn hình nhỏ */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            nav {
+                width: 100%;
+            }
+
+            nav img {
+                width: 20%;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                justify-content: center;
+                row-gap: 20px;
+            }
+
+            .flex figure {
+                flex-basis: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="skip-link" href="#main-content">
+        Chuyển đến Nội dung chính
+    </a>
+
+    <header>
+        <h1>Khám phá Công viên Quốc gia</h1>
+        <p>Thiên nhiên tuyệt đẹp đang chờ bạn khám phá</p>
+    </header>
+
+    <nav aria-label="Điều hướng chính">
+        <ul>
+            <li>
+                <a href="#gioi-thieu">Giới thiệu</a>
+            </li>
+            <li>
+                <a href="#canh-dep">Cảnh đẹp</a>
+            </li>
+            <li>
+                <a href="#dong-vat">Động vật hoang dã</a>
+            </li>
+            <li>
+                <a href="#lien-he">Liên hệ</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main id="main-content" tabindex="-1">
+        <section id="gioi-thieu">
+            <h2>Chào mừng đến với công viên</h2>
+            <p>
+                Công viên quốc gia là nơi bảo tồn thiên nhiên, động vật
+                hoang dã và những cảnh quan tuyệt đẹp. Hãy cùng khám phá
+                những khu rừng xanh, núi non hùng vĩ và hồ nước trong lành.
+            </p>
+        </section>
+
+        <section id="canh-dep">
+            <h2>Những cảnh đẹp nổi bật</h2>
+
+            <div class="grid">
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80"
+                        alt="Khu rừng xanh với những hàng cây cao"
+                    >
+                    <figcaption>
+                        Rừng xanh – nơi có hệ sinh thái phong phú.
+                    </figcaption>
+                </figure>
+
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80"
+                        alt="Những ngọn núi cao nổi bật dưới bầu trời"
+                    >
+                    <figcaption>
+                        Núi non – cảnh quan hùng vĩ của thiên nhiên.
+                    </figcaption>
+                </figure>
+
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=800&q=80"
+                        alt="Hồ nước yên bình được bao quanh bởi núi rừng"
+                    >
+                    <figcaption>
+                        Hồ nước – địa điểm lý tưởng để thư giãn.
+                    </figcaption>
+                </figure>
+
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+                        alt="Phong cảnh thiên nhiên rộng lớn dưới ánh nắng"
+                    >
+                    <figcaption>
+                        Thiên nhiên – vẻ đẹp cần được bảo vệ.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section id="dong-vat">
+            <h2>Khám phá thiên nhiên</h2>
+            <p>
+                Công viên là ngôi nhà của nhiều loài động vật và thực vật.
+                Du khách nên giữ gìn vệ sinh, không làm phiền động vật
+                và tuân thủ các quy định bảo tồn.
+            </p>
+
+            <div class="flex">
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800&q=80"
+                        alt="Hươu hoang dã đang đứng giữa môi trường tự nhiên"
+                    >
+                    <figcaption>
+                        Động vật hoang dã cần môi trường sống an toàn.
+                    </figcaption>
+                </figure>
+
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80"
+                        alt="Ánh nắng xuyên qua tán cây trong khu rừng"
+                    >
+                    <figcaption>
+                        Bảo vệ rừng giúp duy trì sự đa dạng sinh học.
+                    </figcaption>
+                </figure>
+
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80"
+                        alt="Con đường đi bộ giữa cảnh quan thiên nhiên"
+                    >
+                    <figcaption>
+                        Đi bộ khám phá là cách gần gũi với thiên nhiên.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section id="lien-he">
+            <h2>Thông điệp bảo vệ môi trường</h2>
+            <p>
+                Hãy không xả rác, hạn chế đồ nhựa dùng một lần và tôn trọng
+                mọi sinh vật. Mỗi hành động nhỏ đều góp phần bảo vệ hành
+                tinh xanh cho thế hệ tương lai.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Khám phá Công viên Quốc gia</p>
+        <p>
+            <a href="#main-content">Quay lại nội dung chính</a>
+        </p>
+    </footer>
+</body>
+</html>
