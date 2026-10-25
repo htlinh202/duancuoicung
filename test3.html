@@ -1,696 +1,386 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bài Tập Thiết Kế Web - Mẫu Đa Trang Hợp Nhất (Single Page App)</title>
-  
-  <!-- Phông chữ Google Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Tailwind CSS CDN (Dùng cho lớp tiện ích nhanh) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Khám phá thiên nhiên, núi rừng và những bãi biển tuyệt đẹp.">
+    <title>Khám Phá Thiên Nhiên</title>
 
-  <style>
-    /* =========================================================
-       THIẾT LẬP CƠ BẢN (BASE STYLES)
-       ========================================================= */
-    :root {
-      --primary-color: #2563eb;
-      --primary-hover: #1d4ed8;
-      --bg-slate: #f8fafc;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #475569;
-    }
+    <style>
+        /* General styles */
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-slate);
-      color: var(--text-main);
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
-    }
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+            color: #24332d;
+            background-color: #f4f8f5;
+        }
 
-    /* =========================================================
-       YÊU CẦU 4: LIÊN KẾT "CHUYỂN ĐẾN NỘI DUNG CHÍNH" (SKIP LINK)
-       Sử dụng thuộc tính position và lớp giả :focus.
-       Chỉ hiển thị khi liên kết được tập trung (Tab focus).
-       ========================================================= */
-    .skip-link {
-      position: absolute; /* Yêu cầu 4: Thuộc tính position */
-      top: -120px;
-      left: 1rem;
-      background-color: var(--primary-color);
-      color: #ffffff;
-      padding: 0.85rem 1.5rem;
-      border-radius: 0.5rem;
-      font-weight: 700;
-      font-size: 0.95rem;
-      z-index: 9999;
-      text-decoration: none;
-      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
-      transition: top 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+        h1, h2, h3 {
+            line-height: 1.3;
+        }
 
-    /* Lớp giả :focus hiển thị liên kết nhảy */
-    .skip-link:focus {
-      top: 1rem; /* Hiển thị ngay góc trên màn hình khi Focus */
-      outline: 3px solid #93c5fd;
-      outline-offset: 2px;
-    }
+        h1 {
+            font-size: 2.5rem;
+        }
 
-    /* =========================================================
-       YÊU CẦU 5 & 8: THANH ĐIỀU HƯỚNG BẮT MẮT & CSS FLEXBOX
-       Sử dụng ít nhất 3 thuộc tính CSS:
-       1. background-color (với hiệu ứng kính mờ)
-       2. padding
-       3. border-radius
-       4. box-shadow
-       5. gap
-       ========================================================= */
-    .custom-nav-container {
-      display: flex; /* Yêu cầu 8: Áp dụng CSS Flexbox */
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      background-color: rgba(15, 23, 42, 0.92); /* Thuộc tính CSS 1 */
-      padding: 1rem 1.75rem; /* Thuộc tính CSS 2 */
-      border-radius: 1rem; /* Thuộc tính CSS 3 */
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15); /* Thuộc tính CSS 4 */
-      gap: 1rem; /* Thuộc tính CSS 5 */
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+        h2 {
+            color: #176b50;
+        }
 
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 1.25rem;
-    }
+        a {
+            color: #075c45;
+        }
 
-    .nav-links {
-      display: flex; /* Yêu cầu 8: Flexbox menu */
-      gap: 0.75rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
+        /* Skip link: visible only when focused */
+        .skip-link {
+            position: absolute;
+            top: 0;
+            left: 12px;
+            padding: 12px 18px;
+            background-color: #ffffff;
+            color: #123d30;
+            border: 2px solid #176b50;
+            border-radius: 8px;
+            transform: translateY(-150%);
+            z-index: 1000;
+        }
 
-    .nav-btn {
-      color: #94a3b8;
-      font-weight: 600;
-      padding: 0.6rem 1.2rem;
-      border-radius: 0.5rem;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      border: 1px solid transparent;
-      cursor: pointer;
-      background: transparent;
-      font-size: 0.95rem;
-    }
+        .skip-link:focus {
+            transform: translateY(12px);
+            outline: 3px solid #e6a23c;
+            outline-offset: 3px;
+        }
 
-    /* Yêu cầu 9: Lớp giả :hover thú vị cho điều hướng */
-    .nav-btn:hover {
-      color: #ffffff;
-      background-color: rgba(255, 255, 255, 0.12);
-      transform: translateY(-2px); /* Hiệu ứng nổi nhẹ */
-      border-color: rgba(255, 255, 255, 0.2);
-    }
+        /* Header */
+        header {
+            padding: 45px 20px;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #145c43, #4c9470);
+        }
 
-    .nav-btn:focus-visible {
-      outline: 2px solid #38bdf8;
-      outline-offset: 2px;
-    }
+        header p {
+            max-width: 650px;
+            margin: 12px auto 0;
+        }
 
-    .nav-btn.active {
-      color: #ffffff;
-      background: linear-gradient(135deg, #2563eb, #3b82f6);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
-    }
+        /* Navigation: Flexbox and multiple CSS properties */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #123d30;
+            padding: 12px 16px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
 
-    /* =========================================================
-       YÊU CẦU 6: MÔ HÌNH HỘP (BOX MODEL) CHO TẤT CẢ HÌNH ẢNH
-       Bắt buộc phải sử dụng: border, padding, border-radius
-       ========================================================= */
-    .box-model-img {
-      padding: 10px; /* Padding (Đệm) */
-      border: 2px solid #cbd5e1; /* Border (Đường viền) */
-      border-radius: 16px; /* Border-radius (Bo góc) */
-      background-color: #ffffff; /* Nền đệm cho Box Model */
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      max-width: 100%;
-      height: auto;
-      object-fit: cover;
-      display: block;
-    }
+        nav ul {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px 28px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-    /* Yêu cầu 9: Lớp giả :hover tương tác hình ảnh */
-    .box-model-img:hover {
-      transform: scale(1.04) translateY(-6px) rotate(0.5deg); /* Chuyển đổi thú vị */
-      border-color: var(--primary-color);
-      box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.2), 0 10px 10px -5px rgba(37, 99, 235, 0.1);
-    }
+        nav a {
+            display: inline-block;
+            padding: 8px 12px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 6px;
+            transition: background-color 0.3s ease,
+                        transform 0.3s ease;
+        }
 
-    /* =========================================================
-       YÊU CẦU 7: CSS GRID CHO CÁC PHẦN TỬ CHA
-       Áp dụng cho Trang 2 (Bộ sưu tập) với ít nhất 2 đến 3 cột
-       ========================================================= */
-    .grid-parent {
-      display: grid; /* Yêu cầu 7: Thuộc tính Grid */
-      grid-template-columns: repeat(1, 1fr);
-      gap: 2rem;
-    }
+        nav a:hover {
+            background-color: #3d8262;
+            transform: translateY(-3px);
+        }
 
-    @media (min-width: 640px) {
-      .grid-parent {
-        grid-template-columns: repeat(2, 1fr); /* 2 cột trên máy tính bảng */
-      }
-    }
+        nav a:focus-visible {
+            outline: 3px solid #ffd166;
+            outline-offset: 4px;
+        }
 
-    @media (min-width: 1024px) {
-      .grid-parent {
-        grid-template-columns: repeat(3, 1fr); /* 3 cột trên màn hình lớn */
-      }
-    }
+        /* Main content */
+        main {
+            width: min(1100px, 92%);
+            margin: 35px auto;
+        }
 
-    /* =========================================================
-       YÊU CẦU 8: CSS FLEXBOX CHO PHẦN TỬ CHA
-       Áp dụng cho Trang 3 (Chi tiết & Đổi mới)
-       ========================================================= */
-    .flex-parent {
-      display: flex; /* Yêu cầu 8: Thuộc tính Flexbox */
-      flex-direction: column;
-      gap: 2rem;
-    }
+        .intro {
+            margin-bottom: 35px;
+            padding: 24px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
 
-    @media (min-width: 768px) {
-      .flex-parent {
-        flex-direction: row;
-        align-items: center;
-      }
+        /* Three content sections in one HTML page */
+        .content-section {
+            margin: 35px 0;
+            padding: 25px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            scroll-margin-top: 90px;
+        }
 
-      .flex-child {
-        flex: 1;
-      }
-    }
+        /* CSS Grid: two or more columns */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+            margin-top: 22px;
+        }
 
-    /* =========================================================
-       YÊU CẦU 10: BỘ CHỌN :nth-child() NÂNG CAO
-       Áp dụng dáng bo góc và phong cách so le cho hình ảnh/thẻ
-       ========================================================= */
-    /* Thẻ ở vị trí lẻ (1, 3, 5...) */
-    .gallery-item:nth-child(odd) .box-model-img {
-      border-radius: 32px 6px 32px 6px; /* Bo góc so le độc đáo */
-      border-color: #93c5fd;
-      background-color: #eff6ff;
-    }
+        .gallery figure {
+            margin: 0;
+            padding: 12px;
+            background-color: #eef5ef;
+            border-radius: 12px;
+            overflow: hidden;
+        }
 
-    /* Thẻ ở vị trí chẵn (2, 4, 6...) */
-    .gallery-item:nth-child(even) .box-model-img {
-      border-radius: 6px 32px 6px 32px; /* Bo góc đối lập */
-      border-color: #fbcfe8;
-      background-color: #fdf2f8;
-    }
+        /* Box model: border, padding and border-radius */
+        .gallery img {
+            display: block;
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            border: 3px solid #ffffff;
+            padding: 4px;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+            transition: transform 0.35s ease,
+                        box-shadow 0.35s ease;
+        }
 
-    /* Hover riêng biệt cho thẻ chẵn dùng nth-child + hover */
-    .gallery-item:nth-child(even):hover .box-model-img {
-      transform: scale(1.04) rotate(-1.5deg);
-    }
+        /* Interesting hover effect */
+        .gallery img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 18px rgba(23, 107, 80, 0.3);
+        }
 
-    /* Định dạng bài viết ở Trang 3 dựa trên nth-child */
-    .showcase-card:nth-child(odd) {
-      border-left: 6px solid #2563eb;
-    }
+        /* Advanced selector: nth-child */
+        .gallery figure:nth-child(even) img {
+            border-radius: 35px 8px 35px 8px;
+        }
 
-    .showcase-card:nth-child(even) {
-      border-left: 6px solid #ec4899;
-    }
+        .gallery figure:nth-child(odd) img {
+            border-radius: 8px 35px 8px 35px;
+        }
 
-    /* =========================================================
-       QUẢN LÝ ẨN/HIỂN THỊ CÁC TRANG (SPA TABBING)
-       ========================================================= */
-    .page-section {
-      display: none;
-      animation: fadeIn 0.4s ease-in-out forwards;
-    }
+        figcaption {
+            padding: 10px 3px 2px;
+            font-size: 0.95rem;
+        }
 
-    .page-section.active-page {
-      display: block;
-    }
+        .tips {
+            padding-left: 24px;
+        }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
+        .tips li {
+            margin-bottom: 10px;
+        }
+
+        .text-link {
+            font-weight: bold;
+            text-underline-offset: 4px;
+        }
+
+        .text-link:hover {
+            color: #b14f16;
+        }
+
+        footer {
+            padding: 25px 16px;
+            text-align: center;
+            color: white;
+            background-color: #123d30;
+        }
+
+        footer a {
+            color: #ffffff;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 750px) {
+            .gallery {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+
+            nav ul {
+                gap: 6px;
+            }
+
+            nav a {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+
+            .content-section,
+            .intro {
+                padding: 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
 
-  <!-- =========================================================
-       YÊU CẦU 4: LIÊN KẾT SKIP TO MAIN CONTENT
-       ========================================================= -->
-  <a href="#main-content" class="skip-link">
-    <i class="fa-solid fa-arrow-down mr-2"></i>Chuyển đến Nội dung chính
-  </a>
+<body>
+    <a class="skip-link" href="#main-content">
+        Chuyển đến Nội dung chính
+    </a>
 
-  <!-- Header & Thanh điều hướng chính -->
-  <header class="sticky top-0 z-50 p-4 max-w-7xl mx-auto w-full">
-    <!-- YÊU CẦU 5 & 8: Điều hướng thu hút sử dụng CSS Flexbox -->
-    <nav class="custom-nav-container" aria-label="Menu điều hướng chính">
-      <div class="nav-brand">
-        <span class="bg-blue-600 text-white w-9 h-9 rounded-lg flex items-center justify-center shadow-md">
-          <i class="fa-solid fa-code"></i>
-        </span>
-        <span>Portfolio Web</span>
-      </div>
+    <header>
+        <h1>Khám Phá Thiên Nhiên</h1>
+        <p>
+            Hành trình khám phá những cảnh đẹp tuyệt vời,
+            từ núi rừng xanh mát đến những bãi biển thơ mộng.
+        </p>
+    </header>
 
-      <ul class="nav-links" role="tablist">
-        <li role="presentation">
-          <button 
-            id="tab-home" 
-            class="nav-btn active" 
-            onclick="switchTab('page-home', 'tab-home')"
-            role="tab"
-            aria-selected="true"
-            aria-controls="page-home">
-            <i class="fa-solid fa-house"></i>
-            <span>Trang Chủ</span>
-          </button>
-        </li>
-        <li role="presentation">
-          <button 
-            id="tab-gallery" 
-            class="nav-btn" 
-            onclick="switchTab('page-gallery', 'tab-gallery')"
-            role="tab"
-            aria-selected="false"
-            aria-controls="page-gallery">
-            <i class="fa-solid fa-border-all"></i>
-            <span>Bộ Sưu Tập (Grid)</span>
-          </button>
-        </li>
-        <li role="presentation">
-          <button 
-            id="tab-showcase" 
-            class="nav-btn" 
-            onclick="switchTab('page-showcase', 'tab-showcase')"
-            role="tab"
-            aria-selected="false"
-            aria-controls="page-showcase">
-            <i class="fa-solid fa-cubes"></i>
-            <span>Chi Tiết (Flexbox)</span>
-          </button>
-        </li>
-      </ul>
+    <nav aria-label="Điều hướng chính">
+        <ul>
+            <li><a href="#main-content">Trang chủ</a></li>
+            <li><a href="#mountains">Núi rừng</a></li>
+            <li><a href="#beaches">Biển xanh</a></li>
+            <li><a href="#adventures">Phiêu lưu</a></li>
+        </ul>
     </nav>
-  </header>
 
-  <!-- =========================================================
-       KHU VỰC NỘI DUNG CHÍNH (MAIN CONTENT)
-       ========================================================= -->
-  <main id="main-content" class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full" tabindex="-1">
-
-    <!-- =========================================================
-         TRANG 1: TRANG CHỦ (YÊU CẦU 1: 1 Hình ảnh)
-         ========================================================= -->
-    <section id="page-home" class="page-section active-page" role="tabpanel" aria-labelledby="tab-home">
-      <div class="bg-white rounded-2xl p-8 md:p-12 shadow-sm border border-slate-200/80 mb-8">
-        <div class="max-w-3xl mb-8">
-          <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 font-semibold rounded-full text-sm mb-4">
-            <i class="fa-solid fa-star mr-1"></i> Trang 1: Tổng Quan Bài Tập
-          </span>
-          <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
-            Thiết Kế Web Hiện Đại Với Grid, Flexbox & CSS Pseudo-Classes
-          </h1>
-          <p class="text-slate-600 text-lg leading-relaxed mb-6">
-            Chào mừng bạn đến với trang portfolio ứng dụng duy nhất. Dự án này đáp ứng đầy đủ tất cả 14 yêu cầu kĩ thuật của bài tập thiết kế web, bao gồm liên kết truy cập nhanh accessibility, cấu trúc mô hình hộp Box Model chuẩn hóa, và tương tác chuyển đổi bố cục mượt mà.
-          </p>
-          <div class="flex flex-wrap gap-4">
-            <button onclick="switchTab('page-gallery', 'tab-gallery')" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition shadow-lg shadow-blue-500/30 flex items-center gap-2">
-              Xem Bộ Sưu Tập Grid <i class="fa-solid fa-arrow-right"></i>
-            </button>
-            <button onclick="switchTab('page-showcase', 'tab-showcase')" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl transition border border-slate-300">
-              Khám Phá Flexbox
-            </button>
-          </div>
-        </div>
-
-        <!-- Yêu cầu 1 & 6: Ít nhất 1 hình ảnh áp dụng Box Model -->
-        <div class="mt-8 pt-8 border-t border-slate-100">
-          <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-image text-blue-600"></i> Hình Ảnh Minh Họa Nổi Bật (Trang 1)
-          </h2>
-          <div class="max-w-2xl">
-            <!-- Áp dụng lớp .box-model-img (padding, border, border-radius) -->
-            <img 
-              src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80" 
-              alt="Màn hình làm việc lập trình web hiện đại với máy tính và mã nguồn" 
-              class="box-model-img w-full h-80 object-cover" 
-            />
-            <p class="text-xs text-slate-500 mt-2 italic">
-              * Hình ảnh minh họa áp dụng Mô hình Hộp (Box Model) với đường viền border, lớp đệm padding và góc bo mượt mà.
+    <main id="main-content" tabindex="-1">
+        <section class="intro" aria-labelledby="intro-title">
+            <h2 id="intro-title">Chào mừng bạn!</h2>
+            <p>
+                Thiên nhiên mang đến cho chúng ta sự bình yên,
+                nguồn cảm hứng và những trải nghiệm đáng nhớ.
+                Hãy cùng khám phá ba chủ đề thú vị trong bộ sưu tập
+                hình ảnh này.
             </p>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- =========================================================
-         TRANG 2: BỘ SƯU TẬP (YÊU CẦU 1: Ít nhất 5 hình ảnh & YÊU CẦU 7: CSS Grid)
-         ========================================================= -->
-    <section id="page-gallery" class="page-section" role="tabpanel" aria-labelledby="tab-gallery">
-      <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/80 mb-8">
-        <div class="mb-8">
-          <span class="inline-block px-3 py-1 bg-purple-100 text-purple-700 font-semibold rounded-full text-sm mb-2">
-            <i class="fa-solid fa-table-cells mr-1"></i> Trang 2: CSS Grid Layout
-          </span>
-          <h2 class="text-3xl font-bold text-slate-900">Bộ Sưu Tập Hình Ảnh Đa Cột</h2>
-          <p class="text-slate-600 mt-2">
-            Trang này chứa 6 hình ảnh (vượt yêu cầu tối thiểu 5 hình ảnh). Tất cả đều được sắp xếp bằng <strong>CSS Grid</strong> (3 cột ở màn hình desktop) và tạo kiểu bo góc so le bằng bộ chọn <strong>:nth-child()</strong>.
-          </p>
-        </div>
+        <section class="content-section" id="mountains"
+                 aria-labelledby="mountains-title">
+            <h2 id="mountains-title">1. Vẻ đẹp núi rừng</h2>
+            <p>
+                Những ngọn núi hùng vĩ, cánh rừng xanh và không khí
+                trong lành là lựa chọn tuyệt vời cho những ai yêu
+                thích sự yên tĩnh và muốn hòa mình vào thiên nhiên.
+            </p>
 
-        <!-- YÊU CẦU 7 & 10: CSS Grid Parent & Bộ chọn :nth-child -->
-        <div class="grid-parent">
-          
-          <!-- Hình ảnh 1 -->
-          <article class="gallery-item flex flex-col">
-            <img 
-              src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80" 
-              alt="Thiết kế giao diện người dùng trên máy tính" 
-              class="box-model-img w-full h-56" 
-            />
-            <div class="mt-3 p-2">
-              <h3 class="font-bold text-slate-800">1. UI/UX Design</h3>
-              <p class="text-sm text-slate-500">Hình ảnh vị trí :nth-child(odd) lẻ</p>
+            <div class="gallery">
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                        alt="Những ngọn núi cao hùng vĩ dưới bầu trời xanh">
+                    <figcaption>Những đỉnh núi hùng vĩ</figcaption>
+                </figure>
+
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                        alt="Khu rừng xanh với những hàng cây cao">
+                    <figcaption>Khu rừng xanh mát</figcaption>
+                </figure>
             </div>
-          </article>
+        </section>
 
-          <!-- Hình ảnh 2 -->
-          <article class="gallery-item flex flex-col">
-            <img 
-              src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80" 
-              alt="Mã nguồn HTML và CSS trên màn hình tối" 
-              class="box-model-img w-full h-56" 
-            />
-            <div class="mt-3 p-2">
-              <h3 class="font-bold text-slate-800">2. Mã Nguồn Lập Trình</h3>
-              <p class="text-sm text-slate-500">Hình ảnh vị trí :nth-child(even) chẵn</p>
+        <section class="content-section" id="beaches"
+                 aria-labelledby="beaches-title">
+            <h2 id="beaches-title">2. Biển xanh và nắng vàng</h2>
+            <p>
+                Bãi cát trải dài, làn nước trong xanh và tiếng sóng
+                dịu dàng tạo nên không gian lý tưởng để thư giãn,
+                nghỉ ngơi và tận hưởng kỳ nghỉ.
+            </p>
+
+            <div class="gallery">
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                        alt="Bãi biển nhiệt đới với cát trắng và nước biển xanh">
+                    <figcaption>Bãi biển nhiệt đới</figcaption>
+                </figure>
+
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                        alt="Bờ biển yên bình với những con sóng nhẹ">
+                    <figcaption>Khoảnh khắc bình yên</figcaption>
+                </figure>
             </div>
-          </article>
+        </section>
 
-          <!-- Hình ảnh 3 -->
-          <article class="gallery-item flex flex-col">
-            <img 
-              src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80" 
-              alt="Bảo mật dữ liệu và mã hóa ứng dụng web" 
-              class="box-model-img w-full h-56" 
-            />
-            <div class="mt-3 p-2">
-              <h3 class="font-bold text-slate-800">3. An Toàn Thông Tin</h3>
-              <p class="text-sm text-slate-500">Hình ảnh vị trí :nth-child(odd) lẻ</p>
+        <section class="content-section" id="adventures"
+                 aria-labelledby="adventures-title">
+            <h2 id="adventures-title">3. Hành trình phiêu lưu</h2>
+            <p>
+                Đi bộ đường dài, cắm trại và khám phá những vùng đất
+                mới giúp chúng ta rèn luyện sức khỏe, tìm hiểu môi
+                trường và lưu giữ nhiều kỷ niệm đáng nhớ.
+            </p>
+
+            <div class="gallery">
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                        alt="Động vật hoang dã trong môi trường thiên nhiên">
+                    <figcaption>Khám phá thế giới hoang dã</figcaption>
+                </figure>
+
+                <figure>
+                    <img
+                        src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                        alt="Chiếc lều cắm trại giữa không gian ngoài trời">
+                    <figcaption>Trải nghiệm cắm trại</figcaption>
+                </figure>
             </div>
-          </article>
 
-          <!-- Hình ảnh 4 -->
-          <article class="gallery-item flex flex-col">
-            <img 
-              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" 
-              alt="Biểu đồ phân tích dữ liệu trực quan" 
-              class="box-model-img w-full h-56" 
-            />
-            <div class="mt-3 p-2">
-              <h3 class="font-bold text-slate-800">4. Phân Tích Dữ Liệu</h3>
-              <p class="text-sm text-slate-500">Hình ảnh vị trí :nth-child(even) chẵn</p>
-            </div>
-          </article>
+            <h3>Mẹo nhỏ cho chuyến đi</h3>
+            <ul class="tips">
+                <li>Chuẩn bị nước uống và đồ dùng cần thiết.</li>
+                <li>Tôn trọng động vật và bảo vệ môi trường.</li>
+                <li>Kiểm tra thời tiết trước khi khởi hành.</li>
+                <li>Thu gom rác và giữ gìn cảnh quan tự nhiên.</li>
+            </ul>
+        </section>
+    </main>
 
-          <!-- Hình ảnh 5 -->
-          <article class="gallery-item flex flex-col">
-            <img 
-              src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80" 
-              alt="Lập trình viên đang làm việc với máy tính xách tay" 
-              class="box-model-img w-full h-56" 
-            />
-            <div class="mt-3 p-2">
-              <h3 class="font-bold text-slate-800">5. Không Gian Sáng Tạo</h3>
-              <p class="text-sm text-slate-500">Hình ảnh vị trí :nth-child(odd) lẻ</p>
-            </div>
-          </article>
-
-          <!-- Hình ảnh 6 -->
-          <article class="gallery-item flex flex-col">
-            <img 
-              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80" 
-              alt="Bảng chiến lược phát triển sản phẩm công nghệ" 
-              class="box-model-img w-full h-56" 
-            />
-            <div class="mt-3 p-2">
-              <h3 class="font-bold text-slate-800">6. Đổi Mới Công Nghệ</h3>
-              <p class="text-sm text-slate-500">Hình ảnh vị trí :nth-child(even) chẵn</p>
-            </div>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================
-         TRANG 3: CHI TIẾT & ĐỔI MỚI (YÊU CẦU 1 & YÊU CẦU 8: CSS Flexbox)
-         ========================================================= -->
-    <section id="page-showcase" class="page-section" role="tabpanel" aria-labelledby="tab-showcase">
-      <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/80 mb-8">
-        <div class="mb-8">
-          <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 font-semibold rounded-full text-sm mb-2">
-            <i class="fa-solid fa-layer-group mr-1"></i> Trang 3: CSS Flexbox Layout
-          </span>
-          <h2 class="text-3xl font-bold text-slate-900">Bố Cục Linh Hoạt Với Flexbox</h2>
-          <p class="text-slate-600 mt-2">
-            Trang này sử dụng thuộc tính <strong>display: flex</strong> để sắp xếp nội dung và hình ảnh nằm song song linh hoạt trên thiết bị lớn.
-          </p>
-        </div>
-
-        <div class="space-y-8">
-          <!-- YÊU CẦU 8: Flexbox phần tử cha 1 -->
-          <div class="showcase-card flex-parent bg-slate-50 p-6 rounded-2xl border border-slate-200">
-            <div class="flex-child">
-              <h3 class="text-2xl font-bold text-slate-800 mb-3">Tối Ưu Hóa Trải Nghiệm Người Dùng</h3>
-              <p class="text-slate-600 mb-4">
-                Sử dụng CSS Flexbox giúp căn chỉnh các thành phần dễ dàng theo trục ngang hoặc trục dọc. Khi kết hợp với các hiệu ứng chuyển động di chuột (:hover), giao diện trở nên sống động và thân thiện hơn.
-              </p>
-              <ul class="space-y-2 text-slate-700 font-medium">
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-emerald-500"></i> Căn chỉnh khoảng cách tự động với <code>gap</code>
-                </li>
-                <li class="flex items-center gap-2">
-                  <i class="fa-solid fa-check text-emerald-500"></i> Tự động co giãn theo dung lượng màn hình
-                </li>
-              </ul>
-            </div>
-            <div class="flex-child">
-              <!-- YÊU CẦU 6: Mô hình hộp trên Trang 3 -->
-              <img 
-                src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80" 
-                alt="Quy trình thiết kế giao diện sáng tạo" 
-                class="box-model-img w-full h-64" 
-              />
-            </div>
-          </div>
-
-          <!-- YÊU CẦU 8: Flexbox phần tử cha 2 (Đảo hướng) -->
-          <div class="showcase-card flex-parent bg-slate-50 p-6 rounded-2xl border border-slate-200 md:flex-row-reverse">
-            <div class="flex-child">
-              <h3 class="text-2xl font-bold text-slate-800 mb-3">Chuẩn Truy Cập Accessibility (WAVE)</h3>
-              <p class="text-slate-600 mb-4">
-                Tất cả các thành phần tương tác đều hỗ trợ điều khiển qua phím Tab, đạt chỉ số tương phản màu sắc cao và cung cấp mô tả alt đầy đủ cho từng hình ảnh để hỗ trợ trình đọc màn hình.
-              </p>
-              <div class="p-4 bg-white rounded-xl border border-slate-200 text-sm text-slate-600">
-                <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i>
-                Nhấn phím <strong>Tab</strong> từ đầu trang để kích hoạt liên kết nhảy "Chuyển đến Nội dung chính".
-              </div>
-            </div>
-            <div class="flex-child">
-              <img 
-                src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=800&q=80" 
-                alt="Kiểm tra tính dễ truy cập của trang web trên nhiều thiết bị" 
-                class="box-model-img w-full h-64" 
-              />
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- =========================================================
-         BẢNG ĐIỀU KHIỂN XÁC THỰC & ĐÁNH GIÁ NGANG HÀNG
-         (YÊU CẦU 2, 3, 11, 12, 13, 14)
-         ========================================================= -->
-    <section class="mt-12 bg-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-xl">
-      <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-slate-800 gap-4 mb-6">
-        <div>
-          <h2 class="text-2xl font-bold flex items-center gap-2">
-            <i class="fa-solid fa-clipboard-check text-green-400"></i>
-            Bộ Công Cụ Kiểm Tra & Đánh Giá Bài Tập
-          </h2>
-          <p class="text-slate-400 text-sm mt-1">
-            Bảng theo dõi đáp ứng 14 tiêu chí bài tập thiết kế trang web.
-          </p>
-        </div>
-        <div class="flex gap-2">
-          <a href="https://validator.w3.org/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-xs font-semibold rounded-lg transition flex items-center gap-1">
-            <i class="fa-solid fa-up-right-from-square"></i> W3C Validator
-          </a>
-          <a href="https://wave.webaim.org/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold rounded-lg transition flex items-center gap-1">
-            <i class="fa-solid fa-universal-access"></i> WAVE WebAIM
-          </a>
-        </div>
-      </div>
-
-      <!--Danh sách kiểm tra 14 yêu cầu bài tập-->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-8">
-        <div class="space-y-2">
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 1:</strong> Tạo 3 trang HTML riêng biệt (Đã hợp nhất trong 1 SPA file). Trang 2 có 6 hình ảnh.</span>
-          </div>
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 2 & 3:</strong> Mã nguồn hợp lệ xác thực qua W3C HTML Validator.</span>
-          </div>
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 4:</strong> Liên kết "Skip to Content" với <code>position</code> & <code>:focus</code>.</span>
-          </div>
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 5:</strong> Điều hướng thiết kế bắt mắt với >3 thuộc tính CSS đặc trưng.</span>
-          </div>
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 6:</strong> Tất cả ảnh áp dụng Box Model (border, padding, border-radius).</span>
-          </div>
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 7:</strong> Bố cục CSS Grid ít nhất 2-3 cột cho Trang 2.</span>
-          </div>
-        </div>
-
-        <div class="space-y-2">
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 8:</strong> Bố cục Flexbox áp dụng cho Menu và phần tử cha Trang 3.</span>
-          </div>
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 9:</strong> Lớp giả <code>:hover</code> tạo hiệu ứng chuyển động tương tác.</span>
-          </div>
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 10:</strong> Bộ chọn <code>:nth-child()</code> áp dụng kiểu dáng so le cho ảnh/thẻ.</span>
-          </div>
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 11 & 12:</strong> Kiểm tra chuẩn accessibility bằng tiện ích WAVE.</span>
-          </div>
-          <div class="flex items-start gap-2">
-            <i class="fa-solid fa-square-check text-green-400 mt-1"></i>
-            <span><strong>Yêu cầu 13 & 14:</strong> Sẵn sàng nộp liên kết & Hoàn thành 3 đánh giá ngang hàng.</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mẫu Đánh giá Ngang hàng (Yêu cầu 14) -->
-      <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-users-viewfinder text-blue-400"></i>
-          Yêu Cầu 14: Biểu Mẫu 3 Đánh Giá Ngang Hàng (Peer Reviews)
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Bài đánh giá 1 -->
-          <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
-            <span class="text-xs text-blue-400 font-bold block mb-1">ĐÁNH GIÁ 1 / 3</span>
-            <input type="text" placeholder="Tên bạn sinh viên 1..." class="w-full bg-slate-800 text-sm p-2 rounded border border-slate-700 mb-2 focus:outline-none focus:border-blue-500" />
-            <textarea placeholder="Nhận xét bài làm..." rows="2" class="w-full bg-slate-800 text-xs p-2 rounded border border-slate-700 focus:outline-none focus:border-blue-500"></textarea>
-          </div>
-          <!-- Bài đánh giá 2 -->
-          <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
-            <span class="text-xs text-purple-400 font-bold block mb-1">ĐÁNH GIÁ 2 / 3</span>
-            <input type="text" placeholder="Tên bạn sinh viên 2..." class="w-full bg-slate-800 text-sm p-2 rounded border border-slate-700 mb-2 focus:outline-none focus:border-purple-500" />
-            <textarea placeholder="Nhận xét bài làm..." rows="2" class="w-full bg-slate-800 text-xs p-2 rounded border border-slate-700 focus:outline-none focus:border-purple-500"></textarea>
-          </div>
-          <!-- Bài đánh giá 3 -->
-          <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
-            <span class="text-xs text-emerald-400 font-bold block mb-1">ĐÁNH GIÁ 3 / 3</span>
-            <input type="text" placeholder="Tên bạn sinh viên 3..." class="w-full bg-slate-800 text-sm p-2 rounded border border-slate-700 mb-2 focus:outline-none focus:border-emerald-500" />
-            <textarea placeholder="Nhận xét bài làm..." rows="2" class="w-full bg-slate-800 text-xs p-2 rounded border border-slate-700 focus:outline-none focus:border-emerald-500"></textarea>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Footers -->
-  <footer class="bg-white border-t border-slate-200 py-6 text-center text-slate-500 text-sm">
-    <div class="max-w-7xl mx-auto px-4">
-      <p>© 2026 Bài Tập Thiết Kế Web - Đáp ứng đầy đủ 14 yêu cầu trong 1 file HTML.</p>
-    </div>
-  </footer>
-
-  <!-- =========================================================
-       JAVASCRIPT XỬ LÝ CHUYỂN TRANG MƯỢT MÀ (SPA TABBING)
-       ========================================================= -->
-  <script>
-    function switchTab(pageId, tabId) {
-      // Ẩn tất cả các phần trang
-      const pages = document.querySelectorAll('.page-section');
-      pages.forEach(page => {
-        page.classList.remove('active-page');
-      });
-
-      // Bỏ kích hoạt tất cả các nút tab
-      const tabs = document.querySelectorAll('.nav-btn');
-      tabs.forEach(tab => {
-        tab.classList.remove('active');
-        tab.setAttribute('aria-selected', 'false');
-      });
-
-      // Hiển thị trang được chọn
-      const selectedPage = document.getElementById(pageId);
-      if (selectedPage) {
-        selectedPage.classList.add('active-page');
-      }
-
-      // Kích hoạt nút tab tương ứng
-      const selectedTab = document.getElementById(tabId);
-      if (selectedTab) {
-        selectedTab.classList.add('active');
-        selectedTab.setAttribute('aria-selected', 'true');
-      }
-
-      // Cuộn mượt lên đầu nội dung chính
-      document.getElementById('main-content').scrollIntoView({ behavior: 'smooth' });
-    }
-  </script>
+    <footer>
+        <p>Khám Phá Thiên Nhiên | Hãy yêu và bảo vệ môi trường.</p>
+        <p>
+            <a href="#main-content">Quay lại đầu trang</a>
+        </p>
+    </footer>
 </body>
 </html>
